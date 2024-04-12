@@ -8,10 +8,12 @@ using UnityEngine.SceneManagement;
 public class Player : Car
 {
     [SerializeField] private GameObject CameraSpeedParticle;
+    public List<Action<Car>> Skill = new List<Action<Car>>();
     public static Player Instance;
     public Parts parts;
     private List<MeshRenderer> wheel = new List<MeshRenderer>();
     [SerializeField] private float strRotY;
+    [SerializeField] private AudioSource effectaudio;
     private void Awake()
     {
         Instance = this;
@@ -30,6 +32,11 @@ public class Player : Car
     protected override void Update()
     {
         base.Update();
+        if (Input.GetKeyDown(KeyCode.B) && Skill.Count >0)
+        {
+            Skill.Remove(Skill.First());
+            Dele.Instance.SkillImg(null, 1);
+        }
         Drift();
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -139,5 +146,11 @@ public class Player : Car
             Dele.Instance.SkillImg(null, 1);
             yield return wait;
         }
+    }
+
+    public override void collisionFunc()
+    {
+        effectaudio.Play();
+        Debug.Log("음악재생");
     }
 }

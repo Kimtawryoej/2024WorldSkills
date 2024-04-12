@@ -13,7 +13,7 @@ public class ItemBox : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.TryGetComponent(out Player car))
+        if (collision.gameObject.TryGetComponent(out Player car) && car.Skill.Count < 2)
         {
             foreach (var item in ItemManager.Instance.ItemList)
             {
@@ -23,7 +23,7 @@ public class ItemBox : MonoBehaviour
                     break;
                 }
             }
-            Debug.Log("¾ÆÀÌÅÛ");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             GameManager.Instance.StartCoroutine(Dele.Instance.ReSpawn(gameObject, 3));
             gameObject.SetActive(false);
         }

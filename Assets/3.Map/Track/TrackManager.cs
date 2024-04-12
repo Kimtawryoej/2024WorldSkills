@@ -36,12 +36,10 @@ public class TrackManager : MonoSingleTone<TrackManager>
         if (appearPoints.Contains(gobject))
         {
             Destroy(gobject);
-            Debug.Log("0");
         }
         else if (!appearPoints.Contains(gobject))
         {
             appearPoints.Add(gobject);
-            Debug.Log("1");
         }
     }
 

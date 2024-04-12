@@ -29,6 +29,7 @@ public abstract class Car : MonoBehaviour
     [SerializeField] protected Transform target;
     [SerializeField] protected List<string> gameEndText = new List<string>();
     [SerializeField] protected float targetDis;
+    public ParticleSystem HitEffect;
     protected float targetCurrentDis;
     public float TargetCurrentDis => targetCurrentDis;
     [SerializeField] protected float pointCount;
@@ -38,7 +39,6 @@ public abstract class Car : MonoBehaviour
     [SerializeField] protected int MaxLap = 2;
     
     public int Lap => lap;
-    public List<Action<Car>> Skill = new List<Action<Car>>();
     protected float skillCool = 0;
     protected RaycastHit hit;
     protected float hitTime = 0;
@@ -90,7 +90,7 @@ public abstract class Car : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.up, out hit, 0.8f))
         {
             action();
-            Debug.Log("´êÀ½");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½");
             hitTime = 0;
         }
         else
@@ -99,7 +99,7 @@ public abstract class Car : MonoBehaviour
             hitTime += Time.fixedDeltaTime;
             if (hitTime > 2)
             {
-                //Debug.Log("Àç¼ÒÈ¯");
+                //Debug.Log("ï¿½ï¿½ï¿½È¯");
                 hitTime = 0;
                 ReSpawn();
             }
@@ -136,4 +136,8 @@ public abstract class Car : MonoBehaviour
             StartCoroutine(SpeedChange(-5, false, 1));
         }
     }
+
+    public virtual void collisionFunc() { }
+
+        // throw new NotImplementedException();
 }

@@ -23,7 +23,7 @@ public class ShopParts : MonoBehaviour
     //private List<(Sprite, Color)> boughtItemImgImfor = new List<(Sprite, Color)>();
     private void Start()
     {
-        //boughtItemImg = saveItems.GetComponentsInChildren<Image>().ToList(); Debug.Log("����");
+        //boughtItemImg = saveItems.GetComponentsInChildren<Image>().ToList(); Debug.Log("����");
 
         //for (int i = 0; i < boughtItemImgImfor.Count; i++)
         //{
@@ -38,7 +38,7 @@ public class ShopParts : MonoBehaviour
             item.TryGetComponent(out CarPart part);
             item.onClick.AddListener(() =>
             {
-                buyItem = part.Part; ItemFind(part.Part); if (boughtItem.Contains(part.Part)) { buyText.text = $"CellComplete"; }
+                buyItem = part.Part; ItemFind(part.Part); if (boughtItem.Contains(part.Part)) { buyText.text = $"SoldOut"; }
                 else if (!boughtItem.Contains(part.Part)) { buyText.text = $"Buy"; }
             });
         }
@@ -76,23 +76,23 @@ public class ShopParts : MonoBehaviour
         switch (buyItem)
         {
             case Parts.DesertWheel:
-                if (GameManager.Instance.Gold > (1000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -1000000; if (checkCheat) { GameManager.Instance.Gold += 1000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"CellComplete"; AddPanel(buyItem); }
+                if (GameManager.Instance.Gold > (1000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -1000000; if (checkCheat) { GameManager.Instance.Gold += 1000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
                 else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
                 break;
             case Parts.MountainWheel:
-                if (GameManager.Instance.Gold > (2000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -2000000; if (checkCheat) { GameManager.Instance.Gold += 2000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"CellComplete"; AddPanel(buyItem); }
+                if (GameManager.Instance.Gold > (2000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -2000000; if (checkCheat) { GameManager.Instance.Gold += 2000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
                 else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
                 break;
             case Parts.CityWheel:
-                if (GameManager.Instance.Gold > (3000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -3000000; if (checkCheat) { GameManager.Instance.Gold += 3000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"CellComplete"; AddPanel(buyItem); }
+                if (GameManager.Instance.Gold > (3000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -3000000; if (checkCheat) { GameManager.Instance.Gold += 3000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
                 else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
                 break;
             case Parts.SixEngine:
-                if (GameManager.Instance.Gold > (2500000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -2500000; if (checkCheat) { GameManager.Instance.Gold += 2500000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"CellComplete"; AddPanel(buyItem); }
+                if (GameManager.Instance.Gold > (2500000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -2500000; if (checkCheat) { GameManager.Instance.Gold += 2500000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
                 else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
                 break;
             case Parts.EightEngine:
-                if (GameManager.Instance.Gold > (5000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -5000000; if (checkCheat) { GameManager.Instance.Gold += 5000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"CellComplete"; AddPanel(buyItem); }
+                if (GameManager.Instance.Gold > (5000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -5000000; if (checkCheat) { GameManager.Instance.Gold += 5000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
                 else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
                 break;
         }
@@ -100,16 +100,20 @@ public class ShopParts : MonoBehaviour
 
     private void AddPanel(Parts parts)
     {
+        Debug.Log("파츠구입");
         foreach (var item in ItemList)
         {
+            Debug.Log("파츠구입2");
             item.TryGetComponent(out CarPart part);
             if (part.Part.Equals(parts))
             {
+                Debug.Log("파츠구입3");
                 for (int i = 0; i < boughtItemImg.Count; i++)
                 {
+                    Debug.Log("파츠구입4");
                     if (ReferenceEquals(boughtItemImg[i].sprite, null))
                     {
-
+                        Debug.Log("파츠구입5");
                         item.transform.GetChild(0).TryGetComponent(out Image image);
                         //boughtItemImgImfor.Add((image.sprite, image.color));
                         boughtItemImg[i].sprite = image.sprite;
