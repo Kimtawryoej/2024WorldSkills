@@ -6,11 +6,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [System.Serializable]
-public enum Parts { DesertWheel, MountainWheel, CityWheel, SixEngine, EightEngine, None }
+public enum Parts { DesertWheel = 1000000, MountainWheel = 2000000, CityWheel = 3000000, SixEngine = 3500000, EightEngine = 4000000, None }
 public class ShopParts : MonoBehaviour
 {
     private Parts buyItem;
-   public static bool checkCheat = false;
+    public static bool checkCheat = false;
     [SerializeField] private Button[] ItemList = new Button[5];
     [SerializeField] private Text partExpl;
     [SerializeField] private Button buy;
@@ -18,19 +18,9 @@ public class ShopParts : MonoBehaviour
     [SerializeField] private Button exit;
     private Dictionary<Parts, (string, Action)> PartDict;
     [SerializeField] private List<Parts> boughtItem = new List<Parts>();
-    //[SerializeField] private GameObject saveItems;
     public List<Image> boughtItemImg = new List<Image>();
-    //private List<(Sprite, Color)> boughtItemImgImfor = new List<(Sprite, Color)>();
     private void Start()
     {
-        //boughtItemImg = saveItems.GetComponentsInChildren<Image>().ToList(); Debug.Log("����");
-
-        //for (int i = 0; i < boughtItemImgImfor.Count; i++)
-        //{
-        //    Debug.Log(boughtItemImgImfor[i].Item1);
-        //    boughtItemImg[i].sprite = boughtItemImgImfor[i].Item1;
-        //    boughtItemImg[i].color = boughtItemImgImfor[i].Item2;
-        //}
 
         ItemSet();
         foreach (var item in ItemList)
@@ -44,7 +34,6 @@ public class ShopParts : MonoBehaviour
         }
         buy.onClick.AddListener(() => { BuyItem(); });
         exit.onClick.AddListener(() => { StartCoroutine(Dele.Instance.ShopAni()); });
-        //DontDestroyOnLoad(this);
     }
 
     private void ItemSet()
@@ -73,49 +62,37 @@ public class ShopParts : MonoBehaviour
 
     private void BuyItem()
     {
-        switch (buyItem)
+        int itemPrice = (int)buyItem;
+        Action buyFunc = () =>
         {
-            case Parts.DesertWheel:
-                if (GameManager.Instance.Gold > (1000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -1000000; if (checkCheat) { GameManager.Instance.Gold += 1000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
-                else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
-                break;
-            case Parts.MountainWheel:
-                if (GameManager.Instance.Gold > (2000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -2000000; if (checkCheat) { GameManager.Instance.Gold += 2000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
-                else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
-                break;
-            case Parts.CityWheel:
-                if (GameManager.Instance.Gold > (3000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -3000000; if (checkCheat) { GameManager.Instance.Gold += 3000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
-                else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
-                break;
-            case Parts.SixEngine:
-                if (GameManager.Instance.Gold > (2500000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -2500000; if (checkCheat) { GameManager.Instance.Gold += 2500000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
-                else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
-                break;
-            case Parts.EightEngine:
-                if (GameManager.Instance.Gold > (5000000) && !boughtItem.Contains(buyItem)) { GameManager.Instance.Gold = -5000000; if (checkCheat) { GameManager.Instance.Gold += 5000000; } Dele.Instance.PartsApply(Dele.Instance.PartsRead()); boughtItem.Add(buyItem); buyText.text = $"SoldOut"; AddPanel(buyItem); }
-                else if (boughtItem.Contains(buyItem)) { Dele.Instance.PartsApply(Dele.Instance.PartsRead()); }
-                break;
+            GameManager.Instance.Gold -= itemPrice;
+            Dele.Instance.PartsApply(Dele.Instance.PartsRead());
+            boughtItem.Add(buyItem);
+            buyText.text = $"SoldOut";
+            AddPanel(buyItem);
+        };
+        if (boughtItem.Contains(buyItem))
+        {
+            Dele.Instance.PartsApply(Dele.Instance.PartsRead());
+        }
+        else if (itemPrice <= GameManager.Instance.Gold)
+        {
+            buyFunc();
         }
     }
 
     private void AddPanel(Parts parts)
     {
-        Debug.Log("파츠구입");
         foreach (var item in ItemList)
         {
-            Debug.Log("파츠구입2");
             item.TryGetComponent(out CarPart part);
             if (part.Part.Equals(parts))
             {
-                Debug.Log("파츠구입3");
                 for (int i = 0; i < boughtItemImg.Count; i++)
                 {
-                    Debug.Log("파츠구입4");
                     if (ReferenceEquals(boughtItemImg[i].sprite, null))
                     {
-                        Debug.Log("파츠구입5");
                         item.transform.GetChild(0).TryGetComponent(out Image image);
-                        //boughtItemImgImfor.Add((image.sprite, image.color));
                         boughtItemImg[i].sprite = image.sprite;
                         boughtItemImg[i].color = image.color;
                         break;
@@ -123,10 +100,5 @@ public class ShopParts : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void Update()
-    {
-
     }
 }

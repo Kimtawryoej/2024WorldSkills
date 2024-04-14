@@ -1,8 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-interface I_Collisio
+public interface MoveMent
 {
-    public IEnumerator SpeedChange();
+    public void Move(Action move);
+}
+
+public interface Rotation
+{
+    public Action RotateFunc { get; set; }
+    public void Rotate();
+}
+
+public interface SpeedControl
+{
+    public Car car { get; set; }
+
+    public void SpeedChange(float speed, bool switchbool, float time);
 }

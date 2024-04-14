@@ -11,13 +11,17 @@ public class ModelCar : MonoBehaviour
     public Parts Parts => parts;
     private void Start()
     {
-        wheel = gameObject.GetComponentsInChildren<MeshRenderer>().ToList();
-        gameObject.TryGetComponent(out MeshRenderer mesh);
-        wheel.Remove(mesh);
+        ModelWheelGet();
         Dele.Instance.Shop = SetImformation;
         Dele.Instance.PartsRead = GetImforMation;
     }
 
+    protected void ModelWheelGet()
+    {
+        wheel = gameObject.GetComponentsInChildren<MeshRenderer>().ToList();
+        gameObject.TryGetComponent(out MeshRenderer mesh);
+        wheel.Remove(mesh);
+    }
 
     private void SetImformation(Parts part, Color color)
     {
@@ -31,9 +35,5 @@ public class ModelCar : MonoBehaviour
     private ModelCar GetImforMation()
     {
         return this;
-    }
-    void Update()
-    {
-
     }
 }

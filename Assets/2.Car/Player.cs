@@ -1,8 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net;
+using Unity.VisualScripting;
 using UnityEngine;
+using System;
+using System.Linq;
 using UnityEngine.SceneManagement;
 
 public class Player : Car
@@ -14,59 +16,68 @@ public class Player : Car
     private List<MeshRenderer> wheel = new List<MeshRenderer>();
     [SerializeField] private float strRotY;
     [SerializeField] private AudioSource effectaudio;
-    private void Awake()
+
+    protected override void Awake()
     {
+        base.Awake();
         Instance = this;
+        
     }
     protected void Start()
-    {        
-
-        TrackManager.Instance.InsPoint(target);
-        wheel = gameObject.GetComponentsInChildren<MeshRenderer>().ToList();
-        Debug.Log(gameObject.TryGetComponent(out MeshRenderer mesh));
-        wheel.Remove(mesh);
+    {
         Dele.Instance.PlayerVeloicty = PlayerVelocityRe;
         Dele.Instance.PartsApply = SetPlayer;
+        TrackManager.Instance.InsPoint(target);
+        PlayerWheelGet();
         StartCoroutine(SkillUse());
+        rotation.RotateFunc = () =>
+        {
+            angle += inGameSet.CurrentRotY * Input.GetAxis("Horizontal");
+            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, strRotY + angle, transform.eulerAngles.z);
+        };
     }
     protected override void Update()
     {
         base.Update();
-        if (Input.GetKeyDown(KeyCode.B) && Skill.Count >0)
-        {
-            Skill.Remove(Skill.First());
-            Dele.Instance.SkillImg(null, 1);
-        }
         Drift();
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            ReSpawn();
-            StartCoroutine(SpeedChange(-inGameSet.CurrentSpeed, false, 1.5f));
-            //rig.velocity = Vector3.zero;
-        }
-
+        SkillReMove();
+        PlayerReSpawn();
         PartsEngine(parts);
     }
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        Error(() => { PartsWheel(hit, parts); });
-        Move();
+        RayCastAction(() => { PartsWheel(hit, parts); });
+        moveMent.Move((() =>
+        {
+            rig.AddForce(transform.right * inGameSet.CurrentSpeed * Input.GetAxis("Vertical"), ForceMode.Acceleration);
+            if (rig.velocity.magnitude > 40) { CameraSpeedParticle.SetActive(true); }
+            else { CameraSpeedParticle.SetActive(false); }
+        }));
     }
-    protected override void Angle()
+
+    protected void PlayerWheelGet()
     {
-        angle += inGameSet.CurrentRotY * Input.GetAxis("Horizontal");
-        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, strRotY + angle, transform.eulerAngles.z);
+        wheel = gameObject.GetComponentsInChildren<MeshRenderer>().ToList();
+        gameObject.TryGetComponent(out MeshRenderer mesh);
+        wheel.Remove(mesh);
     }
-
-    protected override void Move()
+    protected void PlayerReSpawn()
     {
-
-        rig.AddForce(transform.right * inGameSet.CurrentSpeed * Input.GetAxis("Vertical"), ForceMode.Acceleration);
-        if (rig.velocity.magnitude > 40) { CameraSpeedParticle.SetActive(true); }
-        else { CameraSpeedParticle.SetActive(false); }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            ReSpawn();
+            SpeedControlPro.SpeedChange(-inGameSet.CurrentSpeed, false, 1.5f);
+        }
     }
-
+    protected void SkillReMove()
+    {
+        if (Input.GetKeyDown(KeyCode.B) && Skill.Count > 0)
+        {
+            Skill.Remove(Skill.First());
+            Dele.Instance.SkillImg(null, 1);
+        }
+    }
     protected void Drift()
     {
         if (Input.GetKey(KeyCode.LeftShift)) { inGameSet.CurrentRotY = Mathf.Clamp(inGameSet.CurrentRotY += 0.05f, inGameSet.MinRotY, inGameSet.MaxRotY); }
@@ -136,21 +147,20 @@ public class Player : Car
 
     protected IEnumerator SkillUse()
     {
-        WaitForSeconds wait = new WaitForSeconds(0.5f);
         while (true)
         {
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) && Skill.Count >= 1);
             Skill.First()(this);
             Skill.Remove(Skill.First());
-            Debug.Log("횟수");
             Dele.Instance.SkillImg(null, 1);
-            yield return wait;
+            yield return Util.delay05;
         }
     }
 
+    
     public override void collisionFunc()
     {
         effectaudio.Play();
-        Debug.Log("음악재생");
     }
+
 }

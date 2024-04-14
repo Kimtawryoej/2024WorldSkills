@@ -18,7 +18,7 @@ public class CarCollision : MonoBehaviour
     {
         if (collision.gameObject.CompareTag($"CollisionObj"))
         {
-            StartCoroutine(car.SpeedChange(speed, speedEffectbool, 1));
+            car.SpeedControlPro.SpeedChange(speed, speedEffectbool, 1);
             car.HitEffect.transform.position = transform.position;
             car.HitEffect.Play();
             Debug.Log(collision.name);
